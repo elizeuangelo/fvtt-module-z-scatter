@@ -2,11 +2,10 @@ import { getSetting } from './settings.js';
 
 type TokenExpanded = Token & { mesh: any; destroyed: boolean; isAnimating: boolean };
 
-const offset = 0.4,
-	rad = Math.PI * 2,
+const rad = Math.PI * 2,
 	baseRotation = Math.PI / 4;
 
-function repositionToken(token: TokenExpanded, rotation: number, pos = 0) {
+function repositionToken(token: TokenExpanded, rotation: number, offset: number, pos = 0) {
 	const size = (token.scene.dimensions as Canvas.Dimensions).size,
 		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
 		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
@@ -70,11 +69,19 @@ function snapToken(
 		height = token.document.height,
 		width = token.document.width;
 
+	const ignoreDead = getSetting('ignoreDead');
+
 	const tokens = token.scene.tokens.contents.filter(
 		(token: TokenDocument & { object: any }) =>
-			!token.object?.destroyed && token.object.x === x && token.object.y === y && token.height === height && token.width === width
+			!token.object?.destroyed &&
+			token.object.x === x &&
+			token.object.y === y &&
+			token.height === height &&
+			token.width === width &&
+			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&
+			token.object.visible
 	);
-	if (tokens.length === 1) {
+	if (tokens.length < 2) {
 		(token.hitArea as any).x = 0;
 		(token.hitArea as any).y = 0;
 		if (oldGroup) {
@@ -107,7 +114,12 @@ function snapToken(
 	SNAPPED_TOKENS.push(tokens);
 
 	const angle = rad / tokens.length;
-	for (let i = 0; i < tokens.length; i++) repositionToken(tokens[i].object as TokenExpanded, angle, i);
+	const offset = getSetting('scatter');
+	for (let i = 0; i < tokens.length; i++) repositionToken(tokens[i].object as TokenExpanded, angle, offset, i);
+}
+
+function checkStatus(token: TokenDocument, status: string[]) {
+	return status.some((s) => token.hasStatusEffect(s));
 }
 
 Hooks.on('refreshToken', snapToken);

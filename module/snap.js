@@ -1,6 +1,6 @@
 import { getSetting } from './settings.js';
-const offset = 0.4, rad = Math.PI * 2, baseRotation = Math.PI / 4;
-function repositionToken(token, rotation, pos = 0) {
+const rad = Math.PI * 2, baseRotation = Math.PI / 4;
+function repositionToken(token, rotation, offset, pos = 0) {
     const size = token.scene.dimensions.size, x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size, y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
     token.border.x = token.document.x - x;
     token.border.y = token.document.y - y;
@@ -43,8 +43,15 @@ function snapToken(token, options) {
     }
     const oldGroup = findGroup(token.document);
     const x = token.document.x, y = token.document.y, height = token.document.height, width = token.document.width;
-    const tokens = token.scene.tokens.contents.filter((token) => !token.object?.destroyed && token.object.x === x && token.object.y === y && token.height === height && token.width === width);
-    if (tokens.length === 1) {
+    const ignoreDead = getSetting('ignoreDead');
+    const tokens = token.scene.tokens.contents.filter((token) => !token.object?.destroyed &&
+        token.object.x === x &&
+        token.object.y === y &&
+        token.height === height &&
+        token.width === width &&
+        !(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&
+        token.object.visible);
+    if (tokens.length < 2) {
         token.hitArea.x = 0;
         token.hitArea.y = 0;
         if (oldGroup) {
@@ -77,8 +84,12 @@ function snapToken(token, options) {
     }
     SNAPPED_TOKENS.push(tokens);
     const angle = rad / tokens.length;
+    const offset = getSetting('scatter');
     for (let i = 0; i < tokens.length; i++)
-        repositionToken(tokens[i].object, angle, i);
+        repositionToken(tokens[i].object, angle, offset, i);
+}
+function checkStatus(token, status) {
+    return status.some((s) => token.hasStatusEffect(s));
 }
 Hooks.on('refreshToken', snapToken);
 Hooks.on('canvasTearDown', () => (SNAPPED_TOKENS = []));

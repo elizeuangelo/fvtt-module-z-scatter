@@ -1,7 +1,7 @@
-export let snapTokens = true;
+import { getSetting, setSetting } from './settings.js';
 
 function addControl(sceneControls: SceneControl[]) {
-	if (game.users!.filter((u) => u.isGM && u.active)[0] !== game.user) return;
+	if (!game.user!.isGM) return;
 	const tokenControl = sceneControls.find((c) => c.name === 'token')!;
 
 	tokenControl.tools.push({
@@ -9,8 +9,8 @@ function addControl(sceneControls: SceneControl[]) {
 		title: 'Size Snap',
 		icon: 'fas fa-diagram-venn',
 		toggle: true,
-		active: snapTokens,
-		onClick: (toggled) => (snapTokens = toggled),
+		active: getSetting('snapTokens'),
+		onClick: (toggled) => setSetting('snapTokens', toggled),
 	});
 }
 

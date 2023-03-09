@@ -12,5 +12,7 @@ In the setup screen, use the manifest URL https://raw.githubusercontent.com/eliz
 
 ## How to Use
 
+![Presentation](https://raw.githubusercontent.com/elizeuangelo/fvtt-module-z-scatter/assets/presentation.gif)
+
 There is a new Token Control called "Size Snap" wich can be toggled by the DM.
 When activated, you can put multiple tokens of the same size in the same space in the grid, and the module will acomodate them in a ordenable manner.

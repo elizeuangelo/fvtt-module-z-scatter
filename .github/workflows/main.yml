@@ -31,7 +31,7 @@ jobs:
 
             # Zip Files
             - name: Zip files
-              run: zip -r z-scatter * -x ".github/*" "README.md" "*.ts" "LICENSE" "tsconfig.json"
+              run: zip -r z-scatter * -x ".github/*" "assets/*" "*.ts" "README.md" "LICENSE" "tsconfig.json"
 
             # Create a release for this specific version
             - name: Create Release

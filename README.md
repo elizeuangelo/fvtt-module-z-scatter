@@ -1,8 +1,8 @@
 # Foundry VTT - Z-Scatter
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/elizeuangelo/fvtt-module-z-scatter)
-![GitHub Releases](https://img.shields.io/github/downloads/elizeuangelo/fvtt-module-z-scatter/latest/total)
-![GitHub All Releases](https://img.shields.io/github/downloads/elizeuangelo/fvtt-module-z-scatter/total?label=downloads)
+![GitHub Releases](https://img.shields.io/github/downloads/elizeuangelo/fvtt-module-z-scatter/latest/z-scatter.zip)
+![GitHub All Releases](https://img.shields.io/github/downloads/elizeuangelo/fvtt-module-z-scatter/z-scatter.zip?label=downloads)
 
 Automatically force snap tokens in the same square, for better token management in the grid.
 

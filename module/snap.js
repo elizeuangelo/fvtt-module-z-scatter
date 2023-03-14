@@ -41,8 +41,8 @@ function snapToken(token, options) {
     const x = token.document.x, y = token.document.y, height = token.document.height, width = token.document.width;
     const ignoreDead = getSetting('ignoreDead');
     const tokens = token.scene.tokens.contents.filter((token) => !token.object?.destroyed &&
-        token.object.x === x &&
-        token.object.y === y &&
+        token.x === x &&
+        token.y === y &&
         token.height === height &&
         token.width === width &&
         !(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&

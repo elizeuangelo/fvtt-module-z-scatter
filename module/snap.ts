@@ -69,8 +69,8 @@ function snapToken(
 	const tokens = token.scene.tokens.contents.filter(
 		(token: TokenDocument & { object: any }) =>
 			!token.object?.destroyed &&
-			token.object.x === x &&
-			token.object.y === y &&
+			token.x === x &&
+			token.y === y &&
 			token.height === height &&
 			token.width === width &&
 			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&

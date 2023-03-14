@@ -4,10 +4,12 @@ function repositionToken(token, rotation, offset, pos = 0) {
     const size = token.scene.dimensions.size, x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size, y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
     token.border.x = token.document.x - x;
     token.border.y = token.document.y - y;
-    token.hitArea.x = token.effects.x = -x;
-    token.hitArea.y = token.effects.y = -y;
+    token.hitArea.x = token.effects.x = token.bars.x = -x;
+    token.hitArea.y = token.effects.y = token.bars.y = -y;
     token.nameplate.x = token.w / 2 - x;
     token.nameplate.y = token.h + 2 - y;
+    token.tooltip.x = token.w / 2 - x;
+    token.tooltip.y = -y - 2;
     const gridOffset = size / 2;
     token.mesh.x = token.border.x + gridOffset * token.document.width;
     token.mesh.y = token.border.y + gridOffset * token.document.height;
@@ -39,8 +41,8 @@ function snapToken(token, options) {
     if (token.isAnimating)
         return;
     if (!getSetting('snapTokens')) {
-        token.hitArea.x = token.effects.x = 0;
-        token.hitArea.y = token.effects.y = 0;
+        token.hitArea.x = token.effects.x = token.bars.x = 0;
+        token.hitArea.y = token.effects.y = token.bars.y = 0;
         return;
     }
     const oldGroup = findGroup(token.document);
@@ -54,8 +56,8 @@ function snapToken(token, options) {
         !(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&
         token.object.visible);
     if (tokens.length < 2) {
-        token.hitArea.x = token.effects.x = 0;
-        token.hitArea.y = token.effects.y = 0;
+        token.hitArea.x = token.effects.x = token.bars.x = 0;
+        token.hitArea.y = token.effects.y = token.bars.y = 0;
         if (oldGroup) {
             if (oldGroup.length > 1) {
                 const idx = oldGroup.indexOf(token.document);

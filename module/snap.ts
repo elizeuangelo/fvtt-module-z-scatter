@@ -1,6 +1,6 @@
 import { getSetting } from './settings.js';
 
-type TokenExpanded = Token & { mesh: any; destroyed: boolean; isAnimating: boolean; effects: any; nameplate: any };
+type TokenExpanded = Token & { mesh: any; destroyed: boolean; isAnimating: boolean; effects: any; nameplate: any; tooltip: any; bars: any };
 
 const rad = Math.PI * 2,
 	baseRotation = Math.PI / 4;
@@ -13,11 +13,14 @@ function repositionToken(token: TokenExpanded, rotation: number, offset: number,
 	token.border!.x = token.document.x - x;
 	token.border!.y = token.document.y - y;
 
-	(token.hitArea as any).x = token.effects.x = -x;
-	(token.hitArea as any).y = token.effects.y = -y;
+	(token.hitArea as any).x = token.effects.x = token.bars.x = -x;
+	(token.hitArea as any).y = token.effects.y = token.bars.y = -y;
 
 	token.nameplate.x = token.w / 2 - x;
 	token.nameplate.y = token.h + 2 - y;
+
+	token.tooltip.x = token.w / 2 - x;
+	token.tooltip.y = -y - 2;
 
 	const gridOffset = size / 2;
 	token.mesh.x = token.border!.x + gridOffset * token.document.width;
@@ -60,8 +63,8 @@ function snapToken(
 ) {
 	if (token.isAnimating) return;
 	if (!getSetting('snapTokens')) {
-		(token.hitArea as any).x = token.effects.x = 0;
-		(token.hitArea as any).y = token.effects.y = 0;
+		(token.hitArea as any).x = token.effects.x = token.bars.x = 0;
+		(token.hitArea as any).y = token.effects.y = token.bars.y = 0;
 		return;
 	}
 
@@ -85,8 +88,8 @@ function snapToken(
 			token.object.visible
 	);
 	if (tokens.length < 2) {
-		(token.hitArea as any).x = token.effects.x = 0;
-		(token.hitArea as any).y = token.effects.y = 0;
+		(token.hitArea as any).x = token.effects.x = token.bars.x = 0;
+		(token.hitArea as any).y = token.effects.y = token.bars.y = 0;
 		if (oldGroup) {
 			if (oldGroup.length > 1) {
 				const idx = oldGroup.indexOf(token.document);

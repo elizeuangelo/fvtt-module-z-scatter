@@ -10,8 +10,17 @@ function repositionToken(token: TokenExpanded, rotation: number, offset: number,
 		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
 		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
 
-	token.x = token.border!.x = token.document.x - x;
-	token.y = token.border!.y = token.document.y - y;
+	token.border!.x = token.document.x - x;
+	token.border!.y = token.document.y - y;
+
+	(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = -x;
+	(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = -y;
+
+	token.nameplate.x = token.w / 2 - x;
+	token.nameplate.y = token.h + 2 - y;
+
+	token.tooltip.x = token.w / 2 - x;
+	token.tooltip.y = -y - 2;
 
 	const gridOffset = size / 2;
 	token.mesh.x = token.border!.x + gridOffset * token.document.width;
@@ -54,6 +63,8 @@ function snapToken(
 ) {
 	if (token.isAnimating) return;
 	if (!getSetting('snapTokens')) {
+		(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
+		(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
 		return;
 	}
 
@@ -77,6 +88,8 @@ function snapToken(
 			token.object.visible
 	);
 	if (tokens.length < 2) {
+		(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
+		(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
 		if (oldGroup) {
 			if (oldGroup.length > 1) {
 				const idx = oldGroup.indexOf(token.document);
@@ -120,8 +133,7 @@ Hooks.on('canvasTearDown', () => (SNAPPED_TOKENS = []));
 
 // Fix for a broken function in Foundry VTT
 // Will be removed once its fixed in core Foundry
-
-SquareGrid.prototype.getGridPositionFromPixels = function (x, y) {
-	let gs = canvas.dimensions!.size;
-	return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
-};
+//SquareGrid.prototype.getGridPositionFromPixels = function (x, y) {
+//	let gs = canvas.dimensions!.size;
+//	return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
+//};

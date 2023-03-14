@@ -6,6 +6,8 @@ function repositionToken(token, rotation, offset, pos = 0) {
     token.border.y = token.document.y - y;
     token.hitArea.x = token.effects.x = -x;
     token.hitArea.y = token.effects.y = -y;
+    token.nameplate.x = token.w / 2 - x;
+    token.nameplate.y = token.h + 2 - y;
     const gridOffset = size / 2;
     token.mesh.x = token.border.x + gridOffset * token.document.width;
     token.mesh.y = token.border.y + gridOffset * token.document.height;

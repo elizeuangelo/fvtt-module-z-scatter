@@ -1,6 +1,6 @@
 import { getSetting } from './settings.js';
 
-type TokenExpanded = Token & { mesh: any; destroyed: boolean; isAnimating: boolean; effects: any };
+type TokenExpanded = Token & { mesh: any; destroyed: boolean; isAnimating: boolean; effects: any; nameplate: any };
 
 const rad = Math.PI * 2,
 	baseRotation = Math.PI / 4;
@@ -15,6 +15,9 @@ function repositionToken(token: TokenExpanded, rotation: number, offset: number,
 
 	(token.hitArea as any).x = token.effects.x = -x;
 	(token.hitArea as any).y = token.effects.y = -y;
+
+	token.nameplate.x = token.w / 2 - x;
+	token.nameplate.y = token.h + 2 - y;
 
 	const gridOffset = size / 2;
 	token.mesh.x = token.border!.x + gridOffset * token.document.width;

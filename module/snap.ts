@@ -120,9 +120,8 @@ Hooks.on('canvasTearDown', () => (SNAPPED_TOKENS = []));
 
 // Fix for a broken function in Foundry VTT
 // Will be removed once its fixed in core Foundry
-Hooks.on('ready', () => {
-	canvas.grid!.grid!.getGridPositionFromPixels = function (x, y) {
-		let gs = canvas.dimensions!.size;
-		return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
-	};
-});
+
+SquareGrid.prototype.getGridPositionFromPixels = function (x, y) {
+	let gs = canvas.dimensions!.size;
+	return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
+};

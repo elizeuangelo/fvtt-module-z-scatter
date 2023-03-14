@@ -87,9 +87,7 @@ function checkStatus(token, status) {
 }
 Hooks.on('refreshToken', snapToken);
 Hooks.on('canvasTearDown', () => (SNAPPED_TOKENS = []));
-Hooks.on('ready', () => {
-    canvas.grid.grid.getGridPositionFromPixels = function (x, y) {
-        let gs = canvas.dimensions.size;
-        return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
-    };
-});
+SquareGrid.prototype.getGridPositionFromPixels = function (x, y) {
+    let gs = canvas.dimensions.size;
+    return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
+};

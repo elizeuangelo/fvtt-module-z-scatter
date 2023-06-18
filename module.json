@@ -15,5 +15,6 @@
 		"verified": "10.291"
 	},
 	"manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",
+	"url": "https://github.com/elizeuangelo/fvtt-module-z-scatter",
 	"download": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/z-scatter.zip"
 }

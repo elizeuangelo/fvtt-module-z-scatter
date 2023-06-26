@@ -29,6 +29,14 @@ const settings = {
         type: Boolean,
         default: true,
     },
+    sizeOrder: {
+        name: 'Smaller Tokens in Front',
+        hint: 'Takes smaller tokens in front of bigger ones, for better management in the grid.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+    },
 };
 export function getSetting(name) {
     return game.settings.get(SYSTEM_ID, name);

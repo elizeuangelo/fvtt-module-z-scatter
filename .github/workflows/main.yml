@@ -14,6 +14,11 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
 
+            - name: Install TypeScript and Compile
+              run: |
+                  npm install -g typescript
+                  tsc
+
             - name: Get the version
               id: get_version
               run: |

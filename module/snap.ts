@@ -101,7 +101,12 @@ function resetToken(token: Token) {
 	token._refreshBorder();
 }
 
-function snapToken(token: Token, options: RefreshTokenOptions) {
+function isMoving(token: Token) {
+	const animation = [...token.animationContexts.values()].find((ctx) => ctx.to);
+	return !!animation && animation.to && ((animation.to.x ?? token.x) !== token.x || (animation.to.y ?? token.y) !== token.y);
+}
+
+function snapToken(token: Token, _options: RefreshTokenOptions) {
 	if (!getSetting('snapTokens')) {
 		resetToken(token);
 		return;
@@ -140,6 +145,8 @@ function snapToken(token: Token, options: RefreshTokenOptions) {
 		}
 		return;
 	}
+
+	if (isMoving(token)) return;
 
 	if (oldGroup && !sameGroup(oldGroup, tokens)) {
 		const idx = oldGroup.indexOf(token.document);

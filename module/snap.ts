@@ -11,7 +11,13 @@ interface AnimationContext {
 	to?: { y?: number; x?: number };
 }
 
-type TokenExpanded = Token & {
+interface Token {
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+	document: TokenDocument;
+	scene: any;
 	mesh: any;
 	destroyed: boolean;
 	effects: any;
@@ -22,8 +28,18 @@ type TokenExpanded = Token & {
 	border: any;
 	hitArea: any;
 	animationContexts: Map<string, AnimationContext>;
-	_refreshBorder: any;
-};
+	refresh: () => void;
+	_refreshBorder: () => void;
+}
+
+interface TokenDocument {
+	height: number;
+	width: number;
+	x: number;
+	y: number;
+	hasStatusEffect(id: string): boolean;
+	object?: Token;
+}
 
 interface RefreshTokenOptions {
 	refreshPosition?: boolean;
@@ -32,8 +48,8 @@ interface RefreshTokenOptions {
 const rad = Math.PI * 2,
 	baseRotation = Math.PI / 4;
 
-function repositionToken(token: TokenExpanded, rotation: number, offset: number, pos = 0) {
-	const size = (token.scene.dimensions as Canvas.Dimensions).size,
+function repositionToken(token: Token, rotation: number, offset: number, pos = 0) {
+	const size = token.scene.dimensions.size,
 		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
 		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
 
@@ -77,7 +93,7 @@ export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED
 	}
 }
 
-function resetToken(token: TokenExpanded) {
+function resetToken(token: Token) {
 	(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
 	(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
 	token.nameplate.x = token.w / 2;
@@ -85,7 +101,7 @@ function resetToken(token: TokenExpanded) {
 	token._refreshBorder();
 }
 
-function snapToken(token: TokenExpanded, options: RefreshTokenOptions) {
+function snapToken(token: Token, options: RefreshTokenOptions) {
 	if (!getSetting('snapTokens')) {
 		resetToken(token);
 		return;
@@ -145,7 +161,7 @@ function snapToken(token: TokenExpanded, options: RefreshTokenOptions) {
 	const offset = getSetting('scatter');
 	for (let i = 0; i < tokens.length; i++) {
 		try {
-			repositionToken(tokens[i].object as TokenExpanded, angle, offset, i);
+			repositionToken(tokens[i].object as Token, angle, offset, i);
 		} catch {}
 	}
 }

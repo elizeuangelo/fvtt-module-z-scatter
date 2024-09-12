@@ -7,7 +7,7 @@ const settings = {
 		config: false,
 		type: Boolean,
 		default: true,
-		onChange: (value) => canvas.tokens!.placeables.forEach((t) => t.refresh()),
+		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
 	},
 	scatter: {
 		name: 'Scattering',

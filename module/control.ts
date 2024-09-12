@@ -1,6 +1,6 @@
 import { getSetting, setSetting } from './settings.js';
 
-function addControl(sceneControls: SceneControl[]) {
+function addControl(sceneControls: any[]) {
 	if (!game.user!.isGM) return;
 	const tokenControl = sceneControls.find((c) => c.name === 'token')!;
 
@@ -10,7 +10,7 @@ function addControl(sceneControls: SceneControl[]) {
 		icon: 'fas fa-diagram-venn',
 		toggle: true,
 		active: getSetting('snapTokens'),
-		onClick: (toggled) => setSetting('snapTokens', toggled),
+		onClick: (toggled: boolean) => setSetting('snapTokens', toggled),
 	});
 }
 

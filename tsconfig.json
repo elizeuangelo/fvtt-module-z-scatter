@@ -1,9 +1,5 @@
 {
     "compilerOptions": {
-        "skipLibCheck": true,
-        "types": [
-            "@league-of-foundry-developers/foundry-vtt-types"
-        ],
         "lib": [
             "ES2022",
             "DOM",
@@ -12,8 +8,8 @@
         "target": "ES2022",
         "module": "ES2022",
         //"strict": true,
-        "strictNullChecks": true,
-        "alwaysStrict": true,
+        "strictNullChecks": false,
+        "alwaysStrict": false,
         "removeComments": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,

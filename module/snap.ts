@@ -1,6 +1,33 @@
 import { getSetting } from './settings.js';
 
-type TokenExpanded = Token & { mesh: any; destroyed: boolean; isAnimating: boolean; effects: any; nameplate: any; tooltip: any; bars: any; target: any };
+interface AnimationContext {
+	duration: number;
+	name: string;
+	onAnimate: Function[];
+	postAnimate: Function[];
+	preAnimate: Function[];
+	promise: Promise<void>;
+	time: number;
+	to?: { y?: number; x?: number };
+}
+
+type TokenExpanded = Token & {
+	mesh: any;
+	destroyed: boolean;
+	effects: any;
+	nameplate: any;
+	tooltip: any;
+	bars: any;
+	target: any;
+	border: any;
+	hitArea: any;
+	animationContexts: Map<string, AnimationContext>;
+	_refreshBorder: any;
+};
+
+interface RefreshTokenOptions {
+	refreshPosition?: boolean;
+}
 
 const rad = Math.PI * 2,
 	baseRotation = Math.PI / 4;
@@ -9,9 +36,6 @@ function repositionToken(token: TokenExpanded, rotation: number, offset: number,
 	const size = (token.scene.dimensions as Canvas.Dimensions).size,
 		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
 		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
-
-	token.border!.x = token.document.x - x;
-	token.border!.y = token.document.y - y;
 
 	(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = -x;
 	(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = -y;
@@ -23,8 +47,10 @@ function repositionToken(token: TokenExpanded, rotation: number, offset: number,
 	token.tooltip.y = -y - 2;
 
 	const gridOffset = size / 2;
-	token.mesh.x = token.border!.x + gridOffset * token.document.width;
-	token.mesh.y = token.border!.y + gridOffset * token.document.height;
+	token.mesh.x = token.document.x - x + gridOffset * token.document.width;
+	token.mesh.y = token.document.y - y + gridOffset * token.document.height;
+
+	token._refreshBorder();
 }
 
 let SNAPPED_TOKENS: TokenDocument[][] = [];
@@ -46,25 +72,22 @@ function sameGroup(oldGroup: TokenDocument[], newGroup: TokenDocument[]) {
 }
 
 export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED_TOKENS) {
-	for (const t of SNAPPED_TOKENS.flat()) {
+	for (const t of groups.flat()) {
 		t.object?.refresh();
 	}
 }
 
-function snapToken(
-	token: TokenExpanded,
-	options: Partial<{
-		bars: boolean;
-		border: boolean;
-		effects: boolean;
-		elevation: boolean;
-		nameplate: boolean;
-	}>
-) {
-	if (token.isAnimating) return;
+function resetToken(token: TokenExpanded) {
+	(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
+	(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
+	token.nameplate.x = token.w / 2;
+	token.nameplate.y = token.h + 2;
+	token._refreshBorder();
+}
+
+function snapToken(token: TokenExpanded, options: RefreshTokenOptions) {
 	if (!getSetting('snapTokens')) {
-		(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
-		(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
+		resetToken(token);
 		return;
 	}
 
@@ -88,8 +111,7 @@ function snapToken(
 			token.object.visible
 	);
 	if (tokens.length < 2) {
-		(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
-		(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
+		resetToken(token);
 		if (oldGroup) {
 			if (oldGroup.length > 1) {
 				const idx = oldGroup.indexOf(token.document);
@@ -121,7 +143,11 @@ function snapToken(
 
 	const angle = rad / tokens.length;
 	const offset = getSetting('scatter');
-	for (let i = 0; i < tokens.length; i++) repositionToken(tokens[i].object as TokenExpanded, angle, offset, i);
+	for (let i = 0; i < tokens.length; i++) {
+		try {
+			repositionToken(tokens[i].object as TokenExpanded, angle, offset, i);
+		} catch {}
+	}
 }
 
 function checkStatus(token: TokenDocument, status: string[]) {
@@ -130,10 +156,3 @@ function checkStatus(token: TokenDocument, status: string[]) {
 
 Hooks.on('refreshToken', snapToken);
 Hooks.on('canvasTearDown', () => (SNAPPED_TOKENS = []));
-
-// Fix for a broken function in Foundry VTT
-// Will be removed once its fixed in core Foundry
-//SquareGrid.prototype.getGridPositionFromPixels = function (x, y) {
-//	let gs = canvas.dimensions!.size;
-//	return [Math.floor(y / gs + 0.5), Math.floor(x / gs + 0.5)];
-//};

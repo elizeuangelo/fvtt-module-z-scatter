@@ -53,8 +53,8 @@ function repositionToken(token: Token, rotation: number, offset: number, pos = 0
 		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
 		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
 
-	(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = -x;
-	(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = -y;
+    (token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = -x;
+    (token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = -y;
 
 	token.nameplate.x = token.w / 2 - x;
 	token.nameplate.y = token.h + 2 - y;
@@ -65,6 +65,21 @@ function repositionToken(token: Token, rotation: number, offset: number, pos = 0
 	const gridOffset = size / 2;
 	token.mesh.x = token.document.x - x + gridOffset * token.document.width;
 	token.mesh.y = token.document.y - y + gridOffset * token.document.height;
+
+
+    if (token.shape.points?.[0] === 0 && token.shape.points?.[1] === 0) {
+        const pointX = token.shape.x;
+        const pointY = token.shape.y;
+
+        token.shape.points = token.shape.points
+            .map((value, index) => index % 2 === 0 ? value + pointX : value + pointY);
+    } else if (token.shape.x === 0 && token.shape.y === 0) {
+        let tWidth = size * token.document.width;
+
+        token.shape.points = [
+            0, 0, tWidth, 0, tWidth, tWidth, 0, tWidth
+        ];
+    }
 
 	token._refreshBorder();
 }
@@ -94,11 +109,12 @@ export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED
 }
 
 function resetToken(token: Token) {
-	(token.hitArea as any).x = token.effects.x = token.bars.x = token.target.x = 0;
-	(token.hitArea as any).y = token.effects.y = token.bars.y = token.target.y = 0;
-	token.nameplate.x = token.w / 2;
-	token.nameplate.y = token.h + 2;
-	token._refreshBorder();
+    (token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = 0;
+    (token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = 0;
+    token.nameplate.x = token.w / 2;
+    token.nameplate.y = token.h + 2;
+    token._refreshBorder();
+    token.refresh();
 }
 
 function isMoving(token: Token) {

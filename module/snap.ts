@@ -67,19 +67,18 @@ function repositionToken(token: Token, rotation: number, offset: number, pos = 0
 	token.mesh.y = token.document.y - y + gridOffset * token.document.height;
 
 
-    if (token.shape.points?.[0] === 0 && token.shape.points?.[1] === 0) {
-        const pointX = token.shape.x;
-        const pointY = token.shape.y;
 
-        token.shape.points = token.shape.points
-            .map((value, index) => index % 2 === 0 ? value + pointX : value + pointY);
-    } else if (token.shape.x === 0 && token.shape.y === 0) {
-        let tWidth = size * token.document.width;
+	let tWidth = size * token.document.width;
+	token.shape.points = [
+		0, 0, tWidth, 0, tWidth, tWidth, 0, tWidth
+	];
+	if (token.shape.points?.[0] === 0 && token.shape.points?.[1] === 0) {
+		const pointX = token.shape.x;
+		const pointY = token.shape.y;
 
-        token.shape.points = [
-            0, 0, tWidth, 0, tWidth, tWidth, 0, tWidth
-        ];
-    }
+		token.shape.points = token.shape.points
+			.map((value, index) => index % 2 === 0 ? value + pointX : value + pointY);
+	}
 
 	token._refreshBorder();
 }

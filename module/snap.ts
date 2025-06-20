@@ -27,6 +27,9 @@ interface Token {
 	target: any;
 	border: any;
 	hitArea: any;
+	targetArrows: any;
+	targetPips: any;
+	shape: any;
 	animationContexts: Map<string, AnimationContext>;
 	refresh: () => void;
 	_refreshBorder: () => void;
@@ -53,8 +56,8 @@ function repositionToken(token: Token, rotation: number, offset: number, pos = 0
 		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
 		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
 
-    (token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = -x;
-    (token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = -y;
+	(token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = -x;
+	(token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = -y;
 
 	token.nameplate.x = token.w / 2 - x;
 	token.nameplate.y = token.h + 2 - y;
@@ -66,18 +69,15 @@ function repositionToken(token: Token, rotation: number, offset: number, pos = 0
 	token.mesh.x = token.document.x - x + gridOffset * token.document.width;
 	token.mesh.y = token.document.y - y + gridOffset * token.document.height;
 
-
-
 	let tWidth = size * token.document.width;
-	token.shape.points = [
-		0, 0, tWidth, 0, tWidth, tWidth, 0, tWidth
-	];
+	token.shape.points = [0, 0, tWidth, 0, tWidth, tWidth, 0, tWidth];
 	if (token.shape.points?.[0] === 0 && token.shape.points?.[1] === 0) {
 		const pointX = token.shape.x;
 		const pointY = token.shape.y;
 
-		token.shape.points = token.shape.points
-			.map((value, index) => index % 2 === 0 ? value + pointX : value + pointY);
+		token.shape.points = token.shape.points.map((value, index) =>
+			index % 2 === 0 ? value + pointX : value + pointY
+		);
 	}
 
 	token._refreshBorder();
@@ -108,17 +108,21 @@ export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED
 }
 
 function resetToken(token: Token) {
-    (token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = 0;
-    (token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = 0;
-    token.nameplate.x = token.w / 2;
-    token.nameplate.y = token.h + 2;
-    token._refreshBorder();
-    token.refresh();
+	(token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = 0;
+	(token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = 0;
+	token.nameplate.x = token.w / 2;
+	token.nameplate.y = token.h + 2;
+	token._refreshBorder();
+	token.refresh();
 }
 
 function isMoving(token: Token) {
 	const animation = [...token.animationContexts.values()].find((ctx) => ctx.to);
-	return !!animation && animation.to && ((animation.to.x ?? token.x) !== token.x || (animation.to.y ?? token.y) !== token.y);
+	return (
+		!!animation &&
+		animation.to &&
+		((animation.to.x ?? token.x) !== token.x || (animation.to.y ?? token.y) !== token.y)
+	);
 }
 
 function snapToken(token: Token, _options: RefreshTokenOptions) {

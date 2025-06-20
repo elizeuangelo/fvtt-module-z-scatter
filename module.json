@@ -1,22 +1,20 @@
 {
-    "id": "z-scatter",
-    "title": "Z Scatter",
-    "description": "Automatically force snap small and medium-sized tokens in the same square, for better token management in the grid.",
-    "version": "1.2.10",
-    "authors": [
-        {
-            "name": "Mad Wizard",
-            "discord": "mad.wizard"
-        }
-    ],
-    "esmodules": [
-        "./main.js"
-    ],
-    "compatibility": {
-        "minimum": 12,
-        "verified": "12.331"
-    },
-    "manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",
-    "url": "https://github.com/elizeuangelo/fvtt-module-z-scatter",
-    "download": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/z-scatter.zip"
+	"id": "z-scatter",
+	"title": "Z Scatter",
+	"description": "Automatically force snap small and medium-sized tokens in the same square, for better token management in the grid.",
+	"version": "2.0.0",
+	"authors": [
+		{
+			"name": "Mad Wizard",
+			"discord": "mad.wizard"
+		}
+	],
+	"esmodules": ["./main.js"],
+	"compatibility": {
+		"minimum": 13,
+		"verified": "13.345"
+	},
+	"manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",
+	"url": "https://github.com/elizeuangelo/fvtt-module-z-scatter",
+	"download": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/z-scatter.zip"
 }

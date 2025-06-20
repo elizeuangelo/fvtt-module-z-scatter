@@ -108,12 +108,28 @@ export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED
 }
 
 function resetToken(token: Token) {
-	(token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = 0;
-	(token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = 0;
-	token.nameplate.x = token.w / 2;
-	token.nameplate.y = token.h + 2;
-	token._refreshBorder();
-	token.refresh();
+	const positionUpdates: {x: number, y: number}[] = [
+    token.hitArea,
+    token.effects,
+    token.bars,
+    token.targetArrows,
+    token.targetPips,
+  ] 
+
+  let needsRefresh = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 2
+  token.nameplate.x = token.w / 2
+  token.nameplate.y = token.h + 2
+
+  for (const displayObject of positionUpdates) {
+    needsRefresh = needsRefresh || !!displayObject.x || !!displayObject.y
+    displayObject.x = 0
+    displayObject.y = 0
+  }
+
+  if (needsRefresh) {
+    token._refreshBorder()
+    token.refresh()
+  }
 }
 
 function isMoving(token: Token) {

@@ -14,6 +14,13 @@
 		"minimum": 13,
 		"verified": "13.345"
 	},
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+		}
+	],
 	"manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",
 	"url": "https://github.com/elizeuangelo/fvtt-module-z-scatter",
 	"download": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/z-scatter.zip"

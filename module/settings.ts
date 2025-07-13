@@ -10,8 +10,8 @@ const settings = {
 		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
 	},
 	scatter: {
-		name: 'Scattering',
-		hint: 'How much the tokens will scatter around?',
+		name: `${SYSTEM_ID}.settings.scatter.name`,
+		hint: `${SYSTEM_ID}.settings.scatter.hint`,
 		scope: 'world',
 		config: true,
 		type: Number,
@@ -23,8 +23,8 @@ const settings = {
 		},
 	},
 	ignoreDead: {
-		name: 'Ignore Special Cases',
-		hint: 'Dead or incapacitated tokens will not be snapped.',
+		name: `${SYSTEM_ID}.settings.ignoreDead.name`,
+		hint: `${SYSTEM_ID}.settings.ignoreDead.hint`,
 		scope: 'world',
 		config: true,
 		type: Boolean,

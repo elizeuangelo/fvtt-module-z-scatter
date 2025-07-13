@@ -19,6 +19,11 @@
 			"lang": "en",
 			"name": "English",
 			"path": "lang/en.json"
+		},
+		{
+			"lang": "ja",
+			"name": "日本語",
+			"path": "lang/ja.json"
 		}
 	],
 	"manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",

@@ -4,13 +4,17 @@
 			"title": "Size Snap"
 		},
 		"settings": {
-			"scatter": {
-				"name": "Scattering",
-				"hint": "How much the tokens will scatter around?"
+			"hideBtn": {
+				"name": "Hide Size Snap Button",
+				"hint": "Whether to hide the size snap button from the token controls."
 			},
 			"ignoreDead": {
 				"name": "Ignore Special Cases",
 				"hint": "Dead or incapacitated tokens will not be snapped."
+			},
+			"scatter": {
+				"name": "Scattering",
+				"hint": "How much the tokens will scatter around?"
 			}
 		}
 	}

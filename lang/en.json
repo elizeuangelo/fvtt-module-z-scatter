@@ -13,7 +13,7 @@
 				"hint": "How much the tokens will scatter around?"
 			},
 			"hideBtn": {
-				"name": "Hide Size Snap Button",
+				"name": "Hide Button",
 				"hint": "Whether to hide the size snap button from the token controls. (Requires Reload)"
 			},
 			"playersBtn": {

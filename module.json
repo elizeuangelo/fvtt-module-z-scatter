@@ -2,7 +2,7 @@
 	"id": "z-scatter",
 	"title": "Z Scatter",
 	"description": "Automatically force snap small and medium-sized tokens in the same square, for better token management in the grid.",
-	"version": "2.0.2",
+	"version": "2.1.0",
 	"authors": [
 		{
 			"name": "Mad Wizard",

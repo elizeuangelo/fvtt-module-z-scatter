@@ -12,22 +12,13 @@ const settings = {
 			canvas.tokens!.placeables.forEach((t) => t.refresh());
 		},
 	},
-	snapTokensPlayerPreference: {
+	snapTokensLocal: {
 		name: 'Snap Tokens (Player Preference)',
 		scope: 'client',
 		config: false,
 		type: Boolean,
 		default: false,
 		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
-	},
-	hideBtn: {
-		name: `${MODULE_ID}.settings.hideBtn.name`,
-		hint: `${MODULE_ID}.settings.hideBtn.hint`,
-		scope: 'world',
-		config: true,
-		type: Boolean,
-		default: false,
-		requiresReload: true,
 	},
 	ignoreDead: {
 		name: `${MODULE_ID}.settings.ignoreDead.name`,
@@ -36,15 +27,6 @@ const settings = {
 		config: true,
 		type: Boolean,
 		default: true,
-	},
-	playersBtn: {
-		name: `${MODULE_ID}.settings.playersBtn.name`,
-		hint: `${MODULE_ID}.settings.playersBtn.hint`,
-		scope: 'world',
-		config: true,
-		type: Boolean,
-		default: false,
-		requiresReload: true,
 	},
 	scatter: {
 		name: `${MODULE_ID}.settings.scatter.name`,
@@ -58,6 +40,24 @@ const settings = {
 			max: 1,
 			step: 0.01,
 		},
+	},
+	hideBtn: {
+		name: `${MODULE_ID}.settings.hideBtn.name`,
+		hint: `${MODULE_ID}.settings.hideBtn.hint`,
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: false,
+		requiresReload: true,
+	},
+	playersBtn: {
+		name: `${MODULE_ID}.settings.playersBtn.name`,
+		hint: `${MODULE_ID}.settings.playersBtn.hint`,
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: false,
+		requiresReload: true,
 	},
 } as const;
 

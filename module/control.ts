@@ -1,7 +1,7 @@
 import { getSetting, setSetting } from './settings.js';
 
 export function snapIsActive() {
-	return getSetting('playersBtn') ? getSetting('snapTokensPlayerPreference') : getSetting('snapTokens');
+	return getSetting('playersBtn') ? getSetting('snapTokensLocal') : getSetting('snapTokens');
 }
 
 function addControl(sceneControls: { tokens: { tools: { sizeSnap: any } } }) {
@@ -16,7 +16,7 @@ function addControl(sceneControls: { tokens: { tools: { sizeSnap: any } } }) {
 		active: snapIsActive(),
 		onChange: (_event, toggled: boolean) => {
 			if (getSetting('playersBtn')) {
-				setSetting('snapTokensPlayerPreference', toggled);
+				setSetting('snapTokensLocal', toggled);
 			} else {
 				setSetting('snapTokens', toggled);
 			}

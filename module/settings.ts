@@ -7,6 +7,17 @@ const settings = {
 		config: false,
 		type: Boolean,
 		default: true,
+		onChange: () => {
+			if (getSetting('playersBtn')) return;
+			canvas.tokens!.placeables.forEach((t) => t.refresh());
+		},
+	},
+	snapTokensPlayerPreference: {
+		name: 'Snap Tokens (Player Preference)',
+		scope: 'client',
+		config: false,
+		type: Boolean,
+		default: false,
 		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
 	},
 	hideBtn: {
@@ -25,6 +36,15 @@ const settings = {
 		config: true,
 		type: Boolean,
 		default: true,
+	},
+	playersBtn: {
+		name: `${MODULE_ID}.settings.playersBtn.name`,
+		hint: `${MODULE_ID}.settings.playersBtn.hint`,
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: false,
+		requiresReload: true,
 	},
 	scatter: {
 		name: `${MODULE_ID}.settings.scatter.name`,

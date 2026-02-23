@@ -76,7 +76,7 @@ function repositionToken(token: Token, rotation: number, offset: number, pos = 0
 		const pointY = token.shape.y;
 
 		token.shape.points = token.shape.points.map((value, index) =>
-			index % 2 === 0 ? value + pointX : value + pointY
+			index % 2 === 0 ? value + pointX : value + pointY,
 		);
 	}
 
@@ -108,28 +108,28 @@ export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED
 }
 
 function resetToken(token: Token) {
-	const positionUpdates: {x: number, y: number}[] = [
-    token.hitArea,
-    token.effects,
-    token.bars,
-    token.targetArrows,
-    token.targetPips,
-  ] 
+	const positionUpdates: { x: number; y: number }[] = [
+		token.hitArea,
+		token.effects,
+		token.bars,
+		token.targetArrows,
+		token.targetPips,
+	];
 
-  let needsRefresh = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 2
-  token.nameplate.x = token.w / 2
-  token.nameplate.y = token.h + 2
+	let needsRefresh = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 2;
+	token.nameplate.x = token.w / 2;
+	token.nameplate.y = token.h + 2;
 
-  for (const displayObject of positionUpdates) {
-    needsRefresh = needsRefresh || !!displayObject.x || !!displayObject.y
-    displayObject.x = 0
-    displayObject.y = 0
-  }
+	for (const displayObject of positionUpdates) {
+		needsRefresh = needsRefresh || !!displayObject.x || !!displayObject.y;
+		displayObject.x = 0;
+		displayObject.y = 0;
+	}
 
-  if (needsRefresh) {
-    token._refreshBorder()
-    token.refresh()
-  }
+	if (needsRefresh) {
+		token._refreshBorder();
+		token.refresh();
+	}
 }
 
 function isMoving(token: Token) {
@@ -141,8 +141,12 @@ function isMoving(token: Token) {
 	);
 }
 
+function mustSnapTokens() {
+	return getSetting('playersBtn') ? getSetting('snapTokensPlayerPreference') : getSetting('snapTokens');
+}
+
 function snapToken(token: Token, _options: RefreshTokenOptions) {
-	if (!getSetting('snapTokens')) {
+	if (!mustSnapTokens()) {
 		resetToken(token);
 		return;
 	}
@@ -164,7 +168,7 @@ function snapToken(token: Token, _options: RefreshTokenOptions) {
 			token.height === height &&
 			token.width === width &&
 			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&
-			token.object.visible
+			token.object.visible,
 	);
 	if (tokens.length < 2) {
 		resetToken(token);

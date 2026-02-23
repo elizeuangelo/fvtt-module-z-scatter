@@ -1,3 +1,4 @@
+import { snapIsActive } from './control.js';
 import { getSetting } from './settings.js';
 
 interface AnimationContext {
@@ -141,12 +142,9 @@ function isMoving(token: Token) {
 	);
 }
 
-function mustSnapTokens() {
-	return getSetting('playersBtn') ? getSetting('snapTokensPlayerPreference') : getSetting('snapTokens');
-}
-
 function snapToken(token: Token, _options: RefreshTokenOptions) {
-	if (!mustSnapTokens()) {
+	if (game.scenes.current.grid.type === CONST.GRID_TYPES.GRIDLESS) return;
+	if (!snapIsActive()) {
 		resetToken(token);
 		return;
 	}

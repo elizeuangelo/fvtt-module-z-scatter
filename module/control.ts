@@ -1,5 +1,9 @@
 import { getSetting, setSetting } from './settings.js';
 
+export function snapIsActive() {
+	return getSetting('playersBtn') ? getSetting('snapTokensPlayerPreference') : getSetting('snapTokens');
+}
+
 function addControl(sceneControls: { tokens: { tools: { sizeSnap: any } } }) {
 	if (!getSetting('playersBtn') && !game.user!.isGM) return;
 	if (getSetting('hideBtn')) return;
@@ -9,7 +13,7 @@ function addControl(sceneControls: { tokens: { tools: { sizeSnap: any } } }) {
 		title: game.i18n.localize('z-scatter.sizeSnap.title'),
 		icon: 'fas fa-diagram-venn',
 		toggle: true,
-		active: getSetting('snapTokens'),
+		active: snapIsActive(),
 		onChange: (_event, toggled: boolean) => {
 			if (getSetting('playersBtn')) {
 				setSetting('snapTokensPlayerPreference', toggled);

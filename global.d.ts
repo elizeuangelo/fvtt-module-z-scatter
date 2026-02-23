@@ -2,6 +2,7 @@ declare global {
 	var game: any;
 	var Hooks: any;
 	var canvas: any;
+	var CONST: any;
 }
 
 export {};

@@ -1,0 +1,17 @@
+{
+	"z-scatter": {
+		"sizeSnap": {
+			"title": "Size Snap"
+		},
+		"settings": {
+			"scatter": {
+				"name": "Scattering",
+				"hint": "How much the tokens will scatter around?"
+			},
+			"ignoreDead": {
+				"name": "Ignore Special Cases",
+				"hint": "Dead or incapacitated tokens will not be snapped."
+			}
+		}
+	}
+}

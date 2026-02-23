@@ -5,7 +5,7 @@ function addControl(sceneControls: { tokens: { tools: { sizeSnap: any } } }) {
 
 	sceneControls.tokens.tools.sizeSnap = {
 		name: 'sizeSnap',
-		title: 'Size Snap',
+		title: game.i18n.localize("z-scatter.sizeSnap.title"),
 		icon: 'fas fa-diagram-venn',
 		toggle: true,
 		active: getSetting('snapTokens'),

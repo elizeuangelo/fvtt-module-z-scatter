@@ -34,7 +34,7 @@ const settings = {
 		scope: 'world',
 		config: true,
 		type: Number,
-		default: 0.4,
+		default: 0.3,
 		range: {
 			min: 0.01,
 			max: 1,

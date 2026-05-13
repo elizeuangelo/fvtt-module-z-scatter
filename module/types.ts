@@ -17,7 +17,8 @@ export interface TokenDocument {
 	x: number;
 	y: number;
 	elevation?: number;
-	getSnappedPosition?(data?: Partial<Pick<TokenDocument, 'x' | 'y' | 'width' | 'height' | 'elevation'>>): {
+	shape?: number;
+	getSnappedPosition?(data?: Partial<Pick<TokenDocument, 'x' | 'y' | 'width' | 'height' | 'elevation' | 'shape'>>): {
 		x: number;
 		y: number;
 		elevation?: number;

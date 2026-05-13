@@ -5,6 +5,8 @@ import { applyVisualOffset, resetVisualOffset } from './render.js';
 import { getSetting } from './settings.js';
 import type { RefreshTokenOptions, Token, TokenDocument } from './types.js';
 
+const POSITION_EPSILON = 0.51;
+
 let SCATTERED_TOKENS = new Set<TokenDocument>();
 
 export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = [...SCATTERED_TOKENS]) {
@@ -92,20 +94,26 @@ function tokenIsMisaligned(token: TokenDocument, grid: any) {
 		width: token.width,
 		height: token.height,
 		elevation: token.elevation,
+		shape: token.shape,
 	});
 
 	if (snapped) return !samePosition(token, snapped);
-	if (!grid?.isSquare && !grid?.size) return false;
+	if (!grid?.isSquare || !grid?.size) return false;
 
 	const size = grid.size ?? 1;
-	return !nearlyEqual(token.x % size, 0) || !nearlyEqual(token.y % size, 0);
+	return !gridCoordinateIsAligned(token.x, size) || !gridCoordinateIsAligned(token.y, size);
 }
 
 function samePosition(a: { x: number; y: number }, b: { x: number; y: number }) {
 	return nearlyEqual(a.x, b.x) && nearlyEqual(a.y, b.y);
 }
 
-function nearlyEqual(a: number, b: number, epsilon = 0.001) {
+function gridCoordinateIsAligned(value: number, size: number) {
+	const remainder = ((value % size) + size) % size;
+	return nearlyEqual(remainder, 0) || nearlyEqual(remainder, size);
+}
+
+function nearlyEqual(a: number, b: number, epsilon = POSITION_EPSILON) {
 	return Math.abs(a - b) <= epsilon;
 }
 

@@ -1,18 +1,12 @@
 {
-    "compilerOptions": {
-        "lib": [
-            "ES2022",
-            "DOM",
-            "DOM.Iterable"
-        ],
-        "target": "ES2022",
-        "module": "ES2022",
-        //"strict": true,
-        "strictNullChecks": false,
-        "alwaysStrict": false,
-        "removeComments": true,
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true,
-    },
+	"compilerOptions": {
+		"target": "es2025",
+		"module": "esnext",
+		"strict": false,
+		"strictNullChecks": false,
+		"removeComments": true,
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true
+	}
 }

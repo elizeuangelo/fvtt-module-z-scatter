@@ -117,9 +117,9 @@ function resetToken(token: Token) {
 		token.targetPips,
 	];
 
-	let needsRefresh = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 2;
+	let needsRefresh = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 3;
 	token.nameplate.x = token.w / 2;
-	token.nameplate.y = token.h + 2;
+	token.nameplate.y = token.h + 3;
 
 	for (const displayObject of positionUpdates) {
 		needsRefresh = needsRefresh || !!displayObject.x || !!displayObject.y;

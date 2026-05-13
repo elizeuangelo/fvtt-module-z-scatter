@@ -1,4 +1,4 @@
-import { getSetting, setSetting } from './settings.js';
+import { getSetting, MODULE_ID, setSetting } from './settings.js';
 
 export function snapIsActive() {
 	return getSetting('playersBtn') ? getSetting('snapTokensLocal') : getSetting('snapTokens');
@@ -10,7 +10,7 @@ function addControl(sceneControls: { tokens: { tools: { sizeSnap: any } } }) {
 
 	sceneControls.tokens.tools.sizeSnap = {
 		name: 'sizeSnap',
-		title: game.i18n.localize('z-scatter.sizeSnap.title'),
+		title: game.i18n.localize(`${MODULE_ID}.sizeSnap.title`),
 		icon: 'fas fa-diagram-venn',
 		toggle: true,
 		active: snapIsActive(),

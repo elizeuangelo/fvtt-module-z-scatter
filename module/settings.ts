@@ -28,6 +28,15 @@ const settings = {
 		type: Boolean,
 		default: true,
 	},
+	ignoreMisaligned: {
+		name: `${MODULE_ID}.settings.ignoreMisaligned.name`,
+		hint: `${MODULE_ID}.settings.ignoreMisaligned.hint`,
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: true,
+		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
+	},
 	scatter: {
 		name: `${MODULE_ID}.settings.scatter.name`,
 		hint: `${MODULE_ID}.settings.scatter.hint`,

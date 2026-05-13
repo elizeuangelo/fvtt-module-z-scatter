@@ -24,7 +24,7 @@ function snapToken(token: Token, _options: RefreshTokenOptions) {
 
 	if (isMoving(token)) return;
 
-	const candidates = getCollisionCandidates(token.scene);
+	const candidates = getCollisionCandidates(token.scene, grid);
 	const groups = buildCollisionGroups(candidates, grid, token.scene.dimensions.size);
 	const activeTokens = new Set(groups.flat());
 
@@ -44,15 +44,17 @@ function snapToken(token: Token, _options: RefreshTokenOptions) {
 	SCATTERED_TOKENS = activeTokens;
 }
 
-function getCollisionCandidates(scene: any) {
+function getCollisionCandidates(scene: any, grid: any) {
 	const ignoreDead = getSetting('ignoreDead');
+	const ignoreMisaligned = getSetting('ignoreMisaligned');
 
 	return scene.tokens.contents.filter(
 		(token: TokenDocument) =>
 			!!token.object &&
 			!token.object.destroyed &&
 			token.object.visible !== false &&
-			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])),
+			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&
+			!(ignoreMisaligned && tokenIsMisaligned(token, grid)),
 	);
 }
 
@@ -81,6 +83,30 @@ function isMoving(token: Token) {
 
 function checkStatus(token: TokenDocument, status: string[]) {
 	return status.some((s) => token.hasStatusEffect(s));
+}
+
+function tokenIsMisaligned(token: TokenDocument, grid: any) {
+	const snapped = token.getSnappedPosition?.({
+		x: token.x,
+		y: token.y,
+		width: token.width,
+		height: token.height,
+		elevation: token.elevation,
+	});
+
+	if (snapped) return !samePosition(token, snapped);
+	if (!grid?.isSquare && !grid?.size) return false;
+
+	const size = grid.size ?? 1;
+	return !nearlyEqual(token.x % size, 0) || !nearlyEqual(token.y % size, 0);
+}
+
+function samePosition(a: { x: number; y: number }, b: { x: number; y: number }) {
+	return nearlyEqual(a.x, b.x) && nearlyEqual(a.y, b.y);
+}
+
+function nearlyEqual(a: number, b: number, epsilon = 0.001) {
+	return Math.abs(a - b) <= epsilon;
 }
 
 Hooks.on('refreshToken', snapToken);

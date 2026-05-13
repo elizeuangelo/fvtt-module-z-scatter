@@ -8,6 +8,10 @@
 				"name": "Ignore Special Cases",
 				"hint": "Dead or incapacitated tokens will not be snapped."
 			},
+			"ignoreMisaligned": {
+				"name": "Ignore Misaligned Tokens",
+				"hint": "Tokens that are deliberately placed off-grid will not be snapped."
+			},
 			"scatter": {
 				"name": "Scattering",
 				"hint": "How much the tokens will scatter around?"

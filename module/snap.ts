@@ -1,136 +1,73 @@
 import { snapIsActive } from './control.js';
+import { buildCollisionGroups, isGridless } from './geometry.js';
+import { calculateOffsets } from './layout.js';
+import { applyVisualOffset, resetVisualOffset } from './render.js';
 import { getSetting } from './settings.js';
+import type { RefreshTokenOptions, Token, TokenDocument } from './types.js';
 
-interface AnimationContext {
-	duration: number;
-	name: string;
-	onAnimate: Function[];
-	postAnimate: Function[];
-	preAnimate: Function[];
-	promise: Promise<void>;
-	time: number;
-	to?: { y?: number; x?: number };
+let SCATTERED_TOKENS = new Set<TokenDocument>();
+
+export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = [...SCATTERED_TOKENS]) {
+	for (const token of groups.flat()) {
+		token.object?.refresh();
+	}
 }
 
-interface Token {
-	x: number;
-	y: number;
-	w: number;
-	h: number;
-	document: TokenDocument;
-	scene: any;
-	mesh: any;
-	destroyed: boolean;
-	effects: any;
-	nameplate: any;
-	tooltip: any;
-	bars: any;
-	target: any;
-	border: any;
-	hitArea: any;
-	targetArrows: any;
-	targetPips: any;
-	shape: any;
-	animationContexts: Map<string, AnimationContext>;
-	refresh: () => void;
-	_refreshBorder: () => void;
-}
+function snapToken(token: Token, _options: RefreshTokenOptions) {
+	const grid = getSceneGrid(token);
 
-interface TokenDocument {
-	height: number;
-	width: number;
-	x: number;
-	y: number;
-	hasStatusEffect(id: string): boolean;
-	object?: Token;
-}
-
-interface RefreshTokenOptions {
-	refreshPosition?: boolean;
-}
-
-const rad = Math.PI * 2,
-	baseRotation = Math.PI / 4;
-
-function repositionToken(token: Token, rotation: number, offset: number, pos = 0) {
-	const size = token.scene.dimensions.size,
-		x = Math.sin(rotation * pos + baseRotation) * offset * token.document.width * size,
-		y = Math.cos(rotation * pos + baseRotation) * offset * token.document.height * size;
-
-	(token.hitArea as any).x = token.effects.x = token.bars.x = token.targetArrows.x = token.targetPips.x = -x;
-	(token.hitArea as any).y = token.effects.y = token.bars.y = token.targetArrows.y = token.targetPips.y = -y;
-
-	token.nameplate.x = token.w / 2 - x;
-	token.nameplate.y = token.h + 2 - y;
-
-	token.tooltip.x = token.w / 2 - x;
-	token.tooltip.y = -y - 2;
-
-	const gridOffset = size / 2;
-	token.mesh.x = token.document.x - x + gridOffset * token.document.width;
-	token.mesh.y = token.document.y - y + gridOffset * token.document.height;
-
-	let tWidth = size * token.document.width;
-	token.shape.points = [0, 0, tWidth, 0, tWidth, tWidth, 0, tWidth];
-	if (token.shape.points?.[0] === 0 && token.shape.points?.[1] === 0) {
-		const pointX = token.shape.x;
-		const pointY = token.shape.y;
-
-		token.shape.points = token.shape.points.map((value, index) =>
-			index % 2 === 0 ? value + pointX : value + pointY,
-		);
+	if (isGridless(grid?.type) || !snapIsActive()) {
+		resetTokens([...SCATTERED_TOKENS, token.document]);
+		SCATTERED_TOKENS.clear();
+		return;
 	}
 
-	token._refreshBorder();
-}
+	if (isMoving(token)) return;
 
-let SNAPPED_TOKENS: TokenDocument[][] = [];
+	const candidates = getCollisionCandidates(token.scene);
+	const groups = buildCollisionGroups(candidates, grid, token.scene.dimensions.size);
+	const activeTokens = new Set(groups.flat());
 
-function findGroup(token: TokenDocument) {
-	for (const group of SNAPPED_TOKENS) {
-		for (const t of group) {
-			if (token === t) return group;
+	for (const oldToken of SCATTERED_TOKENS) {
+		if (!activeTokens.has(oldToken)) resetTokenDocument(oldToken);
+	}
+
+	for (const group of groups) {
+		const offsets = calculateOffsets(group, token.scene.dimensions.size, getSetting('scatter'));
+		for (const groupToken of group) {
+			const offset = offsets.get(groupToken);
+			if (!offset) continue;
+			applyVisualOffset(groupToken.object as Token, offset);
 		}
 	}
+
+	SCATTERED_TOKENS = activeTokens;
 }
 
-function sameGroup(oldGroup: TokenDocument[], newGroup: TokenDocument[]) {
-	if (oldGroup.length !== newGroup.length) return false;
-	for (const t of oldGroup) {
-		if (!newGroup.includes(t)) return false;
-	}
-	return true;
+function getCollisionCandidates(scene: any) {
+	const ignoreDead = getSetting('ignoreDead');
+
+	return scene.tokens.contents.filter(
+		(token: TokenDocument) =>
+			!!token.object &&
+			!token.object.destroyed &&
+			token.object.visible !== false &&
+			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])),
+	);
 }
 
-export function refreshAll(groups: TokenDocument[][] | TokenDocument[] = SNAPPED_TOKENS) {
-	for (const t of groups.flat()) {
-		t.object?.refresh();
+function getSceneGrid(token: Token) {
+	return canvas?.grid ?? token.scene?.grid ?? game.scenes.current?.grid;
+}
+
+function resetTokens(tokens: TokenDocument[]) {
+	for (const token of new Set(tokens)) {
+		resetTokenDocument(token);
 	}
 }
 
-function resetToken(token: Token) {
-	const positionUpdates: { x: number; y: number }[] = [
-		token.hitArea,
-		token.effects,
-		token.bars,
-		token.targetArrows,
-		token.targetPips,
-	];
-
-	let needsRefresh = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 3;
-	token.nameplate.x = token.w / 2;
-	token.nameplate.y = token.h + 3;
-
-	for (const displayObject of positionUpdates) {
-		needsRefresh = needsRefresh || !!displayObject.x || !!displayObject.y;
-		displayObject.x = 0;
-		displayObject.y = 0;
-	}
-
-	if (needsRefresh) {
-		token._refreshBorder();
-		token.refresh();
-	}
+function resetTokenDocument(token: TokenDocument) {
+	if (token.object) resetVisualOffset(token.object as Token);
 }
 
 function isMoving(token: Token) {
@@ -142,77 +79,11 @@ function isMoving(token: Token) {
 	);
 }
 
-function snapToken(token: Token, _options: RefreshTokenOptions) {
-	if (game.scenes.current.grid.type === CONST.GRID_TYPES.GRIDLESS) return;
-	if (!snapIsActive()) {
-		resetToken(token);
-		return;
-	}
-
-	const oldGroup = findGroup(token.document);
-
-	const x = token.document.x,
-		y = token.document.y,
-		height = token.document.height,
-		width = token.document.width;
-
-	const ignoreDead = getSetting('ignoreDead');
-
-	const tokens = token.scene.tokens.contents.filter(
-		(token: TokenDocument & { object: any }) =>
-			!token.object?.destroyed &&
-			token.x === x &&
-			token.y === y &&
-			token.height === height &&
-			token.width === width &&
-			!(ignoreDead && checkStatus(token, ['dead', 'dying', 'unconscious'])) &&
-			token.object.visible,
-	);
-	if (tokens.length < 2) {
-		resetToken(token);
-		if (oldGroup) {
-			if (oldGroup.length > 1) {
-				const idx = oldGroup.indexOf(token.document);
-				oldGroup.splice(idx, 1);
-				refreshAll(oldGroup);
-			} else {
-				const idx = SNAPPED_TOKENS.indexOf(oldGroup);
-				SNAPPED_TOKENS.splice(idx, 1);
-			}
-		}
-		return;
-	}
-
-	if (isMoving(token)) return;
-
-	if (oldGroup && !sameGroup(oldGroup, tokens)) {
-		const idx = oldGroup.indexOf(token.document);
-		oldGroup.splice(idx, 1);
-		if (oldGroup.length) refreshAll(oldGroup);
-		else {
-			const idx = SNAPPED_TOKENS.indexOf(oldGroup);
-			SNAPPED_TOKENS.splice(idx, 1);
-		}
-	}
-	const newGroup = findGroup(tokens.find((t) => t !== token.document)!);
-	if (newGroup) {
-		const idx = SNAPPED_TOKENS.indexOf(newGroup);
-		SNAPPED_TOKENS.splice(idx, 1);
-	}
-	SNAPPED_TOKENS.push(tokens);
-
-	const angle = rad / tokens.length;
-	const offset = getSetting('scatter');
-	for (let i = 0; i < tokens.length; i++) {
-		try {
-			repositionToken(tokens[i].object as Token, angle, offset, i);
-		} catch {}
-	}
-}
-
 function checkStatus(token: TokenDocument, status: string[]) {
 	return status.some((s) => token.hasStatusEffect(s));
 }
 
 Hooks.on('refreshToken', snapToken);
-Hooks.on('canvasTearDown', () => (SNAPPED_TOKENS = []));
+Hooks.on('canvasTearDown', () => {
+	SCATTERED_TOKENS.clear();
+});

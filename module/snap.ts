@@ -27,7 +27,7 @@ function snapToken(token: Token, _options: RefreshTokenOptions) {
 	if (isMoving(token)) return;
 
 	const candidates = getCollisionCandidates(token.scene, grid);
-	const groups = buildCollisionGroups(candidates, grid, token.scene.dimensions.size);
+	const groups = buildCollisionGroups(candidates, grid, token.scene.dimensions.size, getSetting('ignoreElevation'));
 	const activeTokens = new Set(groups.flat());
 
 	for (const oldToken of SCATTERED_TOKENS) {

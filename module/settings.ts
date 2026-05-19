@@ -37,6 +37,15 @@ const settings = {
 		default: true,
 		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
 	},
+	ignoreElevation: {
+		name: `${MODULE_ID}.settings.ignoreElevation.name`,
+		hint: `${MODULE_ID}.settings.ignoreElevation.hint`,
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: false,
+		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
+	},
 	scatter: {
 		name: `${MODULE_ID}.settings.scatter.name`,
 		hint: `${MODULE_ID}.settings.scatter.hint`,

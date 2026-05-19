@@ -32,7 +32,7 @@ export function rectsOverlap(a: Rect, b: Rect) {
 	return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-export function buildCollisionGroups(tokens: TokenDocument[], grid: any, gridSize: number) {
+export function buildCollisionGroups(tokens: TokenDocument[], grid: any, gridSize: number, ignoreElevation = false) {
 	const groups: TokenDocument[][] = [];
 	const visited = new Set<TokenDocument>();
 	const collisionMap = new Map<TokenDocument, Set<TokenDocument>>();
@@ -43,7 +43,7 @@ export function buildCollisionGroups(tokens: TokenDocument[], grid: any, gridSiz
 
 	for (let i = 0; i < tokens.length; i++) {
 		for (let j = i + 1; j < tokens.length; j++) {
-			if (!sameElevation(tokens[i], tokens[j])) continue;
+			if (!ignoreElevation && !sameElevation(tokens[i], tokens[j])) continue;
 			if (!tokensCollide(tokens[i], tokens[j], grid, gridSize)) continue;
 
 			collisionMap.get(tokens[i])!.add(tokens[j]);

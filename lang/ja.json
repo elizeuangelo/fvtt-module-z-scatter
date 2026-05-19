@@ -12,6 +12,10 @@
 				"name": "グリッド外のコマを無視",
 				"hint": "グリッドに揃っていないコマはスナップされません。"
 			},
+			"ignoreElevation": {
+				"name": "Ignore Token Elevation",
+				"hint": "Tokens at different elevations can collide and scatter together."
+			},
 			"scatter": {
 				"name": "分散",
 				"hint": "同じマスのコマをどれくらい散らばらせますか？"

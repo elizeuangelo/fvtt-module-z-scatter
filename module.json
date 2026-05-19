@@ -11,7 +11,7 @@
 	],
 	"esmodules": ["./main.js"],
 	"compatibility": {
-		"minimum": 14,
+		"minimum": 13,
 		"verified": "14.361"
 	},
 	"languages": [

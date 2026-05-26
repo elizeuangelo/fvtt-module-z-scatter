@@ -2,7 +2,11 @@ import type { Offset, Token } from './types.js';
 
 const ZERO_OFFSET: Offset = { x: 0, y: 0 };
 
-export function applyVisualOffset(token: Token, offset: Offset) {
+export interface VisualOffsetOptions {
+	refreshBorder?: boolean;
+}
+
+export function applyVisualOffset(token: Token, offset: Offset, options: VisualOffsetOptions = {}) {
 	if (!canRender(token)) return;
 
 	const objects = getOffsetObjects(token);
@@ -23,25 +27,13 @@ export function applyVisualOffset(token: Token, offset: Offset) {
 	token.mesh.y = token.document.y + offset.y + gridOffset * token.document.height;
 
 	refreshHitArea(token, offset);
-	refreshBorder(token, offset);
+	if (options.refreshBorder ?? true) refreshBorder(token, offset);
 }
 
 export function resetVisualOffset(token: Token) {
 	if (!canRender(token)) return;
 
-	const hadOffset = getOffsetObjects(token).some((object) => !!object.x || !!object.y);
-	const hadBorderOffset = !!token.border?.x || !!token.border?.y;
-	const hadNameplateOffset = token.nameplate.x !== token.w / 2 || token.nameplate.y !== token.h + 3;
-	const size = token.scene.dimensions.size;
-	const expectedMeshX = token.document.x + (size / 2) * token.document.width;
-	const expectedMeshY = token.document.y + (size / 2) * token.document.height;
-	const hadMeshOffset = token.mesh.x !== expectedMeshX || token.mesh.y !== expectedMeshY;
-
 	applyVisualOffset(token, ZERO_OFFSET);
-
-	if (hadOffset || hadBorderOffset || hadNameplateOffset || hadMeshOffset) {
-		token.refresh();
-	}
 }
 
 function getOffsetObjects(token: Token) {

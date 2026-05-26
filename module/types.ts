@@ -18,6 +18,7 @@ export interface TokenDocument {
 	y: number;
 	elevation?: number;
 	shape?: number;
+	movement?: any;
 	getSnappedPosition?(data?: Partial<Pick<TokenDocument, 'x' | 'y' | 'width' | 'height' | 'elevation' | 'shape'>>): {
 		x: number;
 		y: number;
@@ -49,12 +50,17 @@ export interface Token {
 	targetPips: any;
 	shape: any;
 	animationContexts: Map<string, AnimationContext>;
+	movementAnimationPromise?: Promise<void>;
 	refresh: () => void;
 	_refreshBorder: () => void;
 }
 
 export interface RefreshTokenOptions {
 	refreshPosition?: boolean;
+	refreshSize?: boolean;
+	refreshShape?: boolean;
+	refreshElevation?: boolean;
+	refreshBorder?: boolean;
 }
 
 export interface Rect {

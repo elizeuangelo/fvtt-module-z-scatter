@@ -1,32 +1,34 @@
 {
-	"id": "z-scatter",
-	"title": "Z Scatter",
-	"description": "Automatically force snap small and medium-sized tokens in the same square, for better token management in the grid.",
-	"version": "2.2.2",
-	"authors": [
-		{
-			"name": "Mad Wizard",
-			"discord": "mad.wizard"
-		}
-	],
-	"esmodules": ["./main.js"],
-	"compatibility": {
-		"minimum": 13,
-		"verified": "14.363"
-	},
-	"languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "lang/en.json"
-		},
-		{
-			"lang": "ja",
-			"name": "日本語",
-			"path": "lang/ja.json"
-		}
-	],
-	"manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",
-	"url": "https://github.com/elizeuangelo/fvtt-module-z-scatter",
-	"download": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/z-scatter.zip"
+    "id": "z-scatter",
+    "title": "Z Scatter",
+    "description": "Automatically force snap small and medium-sized tokens in the same square, for better token management in the grid.",
+    "version": "2.2.3",
+    "authors": [
+        {
+            "name": "Mad Wizard",
+            "discord": "mad.wizard"
+        }
+    ],
+    "esmodules": [
+        "./main.js"
+    ],
+    "compatibility": {
+        "minimum": 13,
+        "verified": "14.363"
+    },
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        },
+        {
+            "lang": "ja",
+            "name": "日本語",
+            "path": "lang/ja.json"
+        }
+    ],
+    "manifest": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/module.json",
+    "url": "https://github.com/elizeuangelo/fvtt-module-z-scatter",
+    "download": "https://github.com/elizeuangelo/fvtt-module-z-scatter/releases/latest/download/z-scatter.zip"
 }

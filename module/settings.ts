@@ -46,6 +46,15 @@ const settings = {
 		default: false,
 		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
 	},
+	collideDifferentSizes: {
+		name: `${MODULE_ID}.settings.collideDifferentSizes.name`,
+		hint: `${MODULE_ID}.settings.collideDifferentSizes.hint`,
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: true,
+		onChange: () => canvas.tokens!.placeables.forEach((t) => t.refresh()),
+	},
 	scatter: {
 		name: `${MODULE_ID}.settings.scatter.name`,
 		hint: `${MODULE_ID}.settings.scatter.hint`,

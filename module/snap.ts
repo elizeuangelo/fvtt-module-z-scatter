@@ -43,7 +43,13 @@ function recalculateScene(scene: any) {
 	}
 
 	const candidates = getCollisionCandidates(scene, grid);
-	const groups = buildCollisionGroups(candidates, grid, scene.dimensions.size, getSetting('ignoreElevation'));
+	const groups = buildCollisionGroups(
+		candidates,
+		grid,
+		scene.dimensions.size,
+		getSetting('ignoreElevation'),
+		getSetting('collideDifferentSizes'),
+	);
 	const nextOffsets = new Map<TokenDocument, Offset>();
 
 	for (const group of groups) {

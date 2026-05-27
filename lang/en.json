@@ -16,6 +16,10 @@
 				"name": "Ignore Token Elevation",
 				"hint": "Tokens at different elevations can collide and scatter together."
 			},
+			"collideDifferentSizes": {
+				"name": "Collide Different Token Sizes",
+				"hint": "Tokens with different dimensions can collide and scatter together."
+			},
 			"scatter": {
 				"name": "Scattering",
 				"hint": "How much the tokens will scatter around?"

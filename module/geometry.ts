@@ -32,7 +32,13 @@ export function rectsOverlap(a: Rect, b: Rect) {
 	return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-export function buildCollisionGroups(tokens: TokenDocument[], grid: any, gridSize: number, ignoreElevation = false) {
+export function buildCollisionGroups(
+	tokens: TokenDocument[],
+	grid: any,
+	gridSize: number,
+	ignoreElevation = false,
+	collideDifferentSizes = true,
+) {
 	const groups: TokenDocument[][] = [];
 	const visited = new Set<TokenDocument>();
 	const collisionMap = new Map<TokenDocument, Set<TokenDocument>>();
@@ -44,6 +50,7 @@ export function buildCollisionGroups(tokens: TokenDocument[], grid: any, gridSiz
 	for (let i = 0; i < tokens.length; i++) {
 		for (let j = i + 1; j < tokens.length; j++) {
 			if (!ignoreElevation && !sameElevation(tokens[i], tokens[j])) continue;
+			if (!collideDifferentSizes && !sameDimensions(tokens[i], tokens[j])) continue;
 			if (!tokensCollide(tokens[i], tokens[j], grid, gridSize)) continue;
 
 			collisionMap.get(tokens[i])!.add(tokens[j]);
@@ -73,6 +80,10 @@ export function buildCollisionGroups(tokens: TokenDocument[], grid: any, gridSiz
 	}
 
 	return groups;
+}
+
+function sameDimensions(a: TokenDocument, b: TokenDocument) {
+	return a.width === b.width && a.height === b.height;
 }
 
 function tokensCollide(a: TokenDocument, b: TokenDocument, grid: any, gridSize: number) {

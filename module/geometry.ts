@@ -1,10 +1,10 @@
 import type { Rect, TokenDocument } from './types.js';
 
 const HEX_TYPES = new Set([
-	CONST.GRID_TYPES.HEXODDR,
-	CONST.GRID_TYPES.HEXEVENR,
-	CONST.GRID_TYPES.HEXODDQ,
-	CONST.GRID_TYPES.HEXEVENQ,
+	CONST.GRID_TYPES.HEXODDR, // A row-wise hexagon grid (pointy-topped) where odd-numbered rows are offset.
+	CONST.GRID_TYPES.HEXEVENR, // A row-wise hexagon grid (pointy-topped) where even-numbered rows are offset.
+	CONST.GRID_TYPES.HEXODDQ, // A column-wise hexagon grid (flat-topped) where odd-numbered columns are offset.
+	CONST.GRID_TYPES.HEXEVENQ, // A column-wise hexagon grid (flat-topped) where even-numbered columns are offset.
 ]);
 
 export function isGridless(gridType: number) {
@@ -103,6 +103,9 @@ function tokensCollide(a: TokenDocument, b: TokenDocument, grid: any, gridSize: 
 }
 
 function getHexCells(token: TokenDocument, grid: any) {
+	const occupiedCells = getOccupiedHexCells(token, grid);
+	if (occupiedCells.size) return occupiedCells;
+
 	const cells = new Set<string>();
 	if (!grid?.getOffsetRange) return cells;
 
@@ -118,6 +121,38 @@ function getHexCells(token: TokenDocument, grid: any) {
 			for (let j = j0; j < j1; j++) {
 				cells.add(`${i},${j}`);
 			}
+		}
+	} catch {
+		return new Set();
+	}
+
+	return cells;
+}
+
+function getOccupiedHexCells(token: TokenDocument, grid: any) {
+	const cells = new Set<string>();
+	const tokenConstructor = token.constructor as any;
+	const getHexagonalOffsets = tokenConstructor?._getHexagonalOffsets;
+	const getGridOffset = (token as any)._positionToGridOffset;
+	if (typeof getHexagonalOffsets !== 'function' || typeof getGridOffset !== 'function') return cells;
+
+	try {
+		const width = Math.max(Math.round(token.width * 2) / 2, 0.5);
+		const height = Math.max(Math.round(token.height * 2) / 2, 0.5);
+		const shape = token.shape ?? CONST.TOKEN_SHAPES.ELLIPSE_1;
+		const offsets = getHexagonalOffsets.call(tokenConstructor, width, height, shape, grid.columns);
+		const origin = getGridOffset.call(token, {
+			x: token.x,
+			y: token.y,
+			width,
+			height,
+			elevation: token.elevation,
+			shape,
+		});
+		const isEven = ((grid.columns ? origin.j : origin.i) % 2 === 0) === grid.even;
+
+		for (const { i, j } of (isEven ? offsets.even : offsets.odd)) {
+			cells.add(`${origin.i + i},${origin.j + j}`);
 		}
 	} catch {
 		return new Set();
